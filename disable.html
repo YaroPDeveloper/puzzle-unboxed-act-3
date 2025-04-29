@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Access Override Panel</title>
+    <link rel="icon" type="image/x-icon" href="/assets/textures/logo.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            background: #e1e1e1;
+            color: #111;
+            min-height: 100vh;
+            background-image: radial-gradient(#c2c2c2 1px, transparent 1px);
+            background-size: 30px 30px;
+            overflow-x: hidden;
+            touch-action: manipulation;
+            /* ALLOW touch gestures */
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5rem 1rem;
+            background: #fff;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 2px solid #4caf50;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #4caf50;
+            margin-bottom: 0.3rem;
+        }
+
+        #unlockScreen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .container {
+            margin-top: 40px;
+            padding: 1.5rem;
+            width: 90%;
+            text-align: center;
+        }
+
+        .primary-btn,
+        #uploadBtn {
+            font-size: 1.25rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-top: 1rem;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .primary-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .primary-btn:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        #uploadBtn {
+            background: #4caf50;
+            color: white;
+        }
+
+        #uploadBtn:active {
+            background: #1565c0;
+        }
+
+        .loading-bar-container {
+            margin: 2rem auto 1.5rem;
+            width: 100%;
+            max-width: 500px;
+            height: 20px;
+            background: #fff;
+            border: 2px solid #000;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.2);
+            display: none;
+        }
+
+        .loading-bar {
+            height: 100%;
+            width: 0%;
+            background: repeating-linear-gradient(45deg,
+                    #4caf50,
+                    #4caf50 10px,
+                    #66bb6a 10px,
+                    #66bb6a 20px);
+            transition: width 0.2s ease;
+            border-right: 2px solid #2e7d32;
+        }
+
+        .warning {
+            background: #fff3f3;
+            color: #333;
+            border-left: 5px solid #d32f2f;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.95rem;
+            border-radius: 6px;
+        }
+
+        .hint {
+            margin-top: 1.5rem;
+            font-size: 0.95rem;
+            font-style: italic;
+            color: #666;
+        }
+
+        #loadingScreen {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: #e1e1e1;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- First Screen -->
+    <div id="unlockScreen">
+        <header>
+            <div class="logo">DIGITAL MEDIA LAB</div>
+            Secure Access Override Portal
+        </header>
+
+        <div class="container">
+            <button class="primary-btn" id="barrierBtn" onclick="initiateUnlock()">Disable External Access
+                Barrier</button>
+
+            <div class="loading-bar-container" id="loadingContainer">
+                <div class="loading-bar" id="loadingBar"></div>
+            </div>
+
+            <div id="upload-section" style="display: none;">
+                <button id="uploadBtn" onclick="startUpload()">Start Upload</button>
+
+                <div class="warning">
+                    <strong>⚠️ Warning:</strong> System is unstable, manual support will be required.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Second Screen (hidden initially) -->
+    <div id="loadingScreen"></div>
+
+    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.sound.min.js"></script>
+    <script>
+        // Access Barrier Logic
+        function initiateUnlock() {
+            const btn = document.getElementById('barrierBtn');
+            const bar = document.getElementById('loadingBar');
+            const container = document.getElementById('loadingContainer');
+
+            btn.disabled = true;
+            btn.innerText = "Disabling...";
+            container.style.display = 'block';
+
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                bar.style.width = `${Math.min(progress, 100)}%`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        document.getElementById('upload-section').style.display = 'block';
+                        btn.innerText = "Access Barrier Disabled";
+                        btn.disabled = true;
+                    }, 500);
+                }
+            }, 150);
+        }
+
+        function startUpload() {
+            document.getElementById('unlockScreen').style.display = 'none';
+            document.getElementById('loadingScreen').style.display = 'block';
+
+            setupLoadingBar(); // Set up canvas first
+
+            userStartAudio(); // Unlock audio context (especially needed on iPhone)
+
+            // Now manually load and prepare all sounds after user gesture
+            backgroundMusic = loadSound("assets/audio/background_music.ogg", () => {
+                backgroundMusic.setVolume(0.5);
+                backgroundMusic.loop();
+            });
+
+            loadingBarHitSound = loadSound("assets/audio/loadingbar_dmg.ogg");
+            bulletClickedSound = loadSound("assets/audio/bullet_clicked.ogg");
+        }
+
+
+        // Loading Bar Logic
+        let loadingBar, bullets = [], progress = 0, complete = false;
+        let showSpinner = false, bulletImg, shakeTime = 0, particles = [];
+        let isLagging = false, lagTimer = 0;
+        let backgroundMusic, loadingBarHitSound, bulletClickedSound;
+
+        function preload() {
+            bulletImg = loadImage("assets/textures/corruption.png");
+        }
+
+        function setupLoadingBar() {
+            const cnv = createCanvas(windowWidth, windowHeight);
+            cnv.parent('loadingScreen');
+
+            cnv.mousePressed(canvasClicked);
+            cnv.touchStarted(canvasTouched);
+
+            if (backgroundMusic) {
+                backgroundMusic.setVolume(0.5);
+                backgroundMusic.loop();
+            }
+
+            loadingBar = new LoadingBar(0, 0, 0, 50);
+            updateBarPosition();
+        }
+
+        function canvasClicked() {
+            if (!complete) {
+                checkBulletHits(mouseX, mouseY);
+            }
+        }
+
+        function canvasTouched() {
+            if (!complete) {
+                checkBulletHits(touchX, touchY);
+            }
+        }
+
+        function checkBulletHits(x, y) {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                if (bullets[i].contains(x, y)) {
+                    if (bulletClickedSound) bulletClickedSound.play();
+                    for (let j = 0; j < 10; j++) {
+                        particles.push(new Particle(bullets[i].x, bullets[i].y));
+                    }
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+        function drawBackgroundPattern() {
+            const spacing = 40;
+            fill(200);
+            noStroke();
+            for (let x = 0; x < width; x += spacing) {
+                for (let y = 0; y < height; y += spacing) {
+                    ellipse(x, y, 2);
+                }
+            }
+        }
+
+        function draw() {
+            if (!document.getElementById('loadingScreen')?.style.display || document.getElementById('loadingScreen').style.display === 'none') return;
+
+            if (shakeTime > 0) {
+                translate(random(-5, 5), random(-5, 5));
+                shakeTime--;
+            }
+
+            background(225);
+            drawBackgroundPattern();
+
+            if (!complete) {
+                if (!isLagging && frameCount % int(random(200, 300)) === 0) {
+                    triggerLag();
+                }
+                if (!isLagging && progress < 100) {
+                    progress += 0.05;
+                }
+            }
+
+            if (isLagging) {
+                lagTimer--;
+                if (lagTimer <= 0) {
+                    isLagging = false;
+                    showSpinner = false;
+                }
+            }
+
+            if (!complete && frameCount % 60 === 0 && !isLagging) {
+                bullets.push(new Bullet());
+            }
+
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                bullets[i].update();
+                bullets[i].show();
+                if (bullets[i].hits(loadingBar)) {
+                    progress = max(progress - 10, 0);
+                    bullets.splice(i, 1);
+                    if (loadingBarHitSound && loadingBarHitSound.isLoaded()) loadingBarHitSound.play();
+                    shakeTime = 10;
+                    for (let j = 0; j < 10; j++) {
+                        particles.push(new Particle(loadingBar.x + loadingBar.w / 2, loadingBar.y + loadingBar.h / 2));
+                    }
+                }
+            }
+
+            loadingBar.show(progress);
+
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].show();
+                if (particles[i].isDead()) particles.splice(i, 1);
+            }
+
+            if (!complete && progress >= 100) {
+                complete = true;
+                bullets = [];
+                showSpinner = true;
+
+                for (let i = 0; i < 30; i++) {
+                    const px = loadingBar.x + loadingBar.w;
+                    const py = loadingBar.y + loadingBar.h / 2;
+                    particles.push(new Particle(px, py, color(50, 200, 100)));
+                }
+
+                setTimeout(() => {
+                    window.location.href = "confirm.html";
+                }, 2000);
+            }
+
+            fill(0);
+            noStroke();
+            textAlign(CENTER, CENTER);
+            textSize(24);
+
+            if (complete) {
+                text("Loading Complete!", width / 2, height / 2 + 100);
+                if (showSpinner) {
+                    let dots = ".".repeat(floor(millis() / 500) % 4);
+                    textSize(18);
+                    text("Redirecting" + dots, width / 2, height / 2 + 150);
+                }
+            } else if (isLagging) {
+                text("Stabilizing system...", width / 2, height / 2 + 100);
+                let dots = ".".repeat(floor(millis() / 300) % 4);
+                textSize(18);
+                text("Please wait" + dots, width / 2, height / 2 + 150);
+            } else {
+                text(`Loading: ${progress.toFixed(0)}%`, width / 2, height / 2 + 100);
+            }
+
+            if (mouseIsPressed) {
+                canvasClicked(mouseX, mouseY);
+            }
+
+            if (touches.length > 0) {
+                const t = touches[0];
+                canvasClicked(t.x, t.y);
+            }
+        }
+
+        function canvasClicked(x, y) {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                if (bullets[i].contains(x, y)) {
+                    if (bulletClickedSound && bulletClickedSound.isLoaded()) bulletClickedSound.play();
+                    for (let j = 0; j < 10; j++) {
+                        particles.push(new Particle(bullets[i].x, bullets[i].y));
+                    }
+                    bullets.splice(i, 1);
+                }
+            }
+        }
+
+
+        function triggerLag() {
+            isLagging = true;
+            lagTimer = int(random(60, 120));
+            showSpinner = true;
+        }
+
+        function updateBarPosition() {
+            const margin = 40;
+            const maxWidth = 400;
+            loadingBar.w = min(maxWidth, width - margin * 2);
+            loadingBar.x = width / 2 - loadingBar.w / 2;
+            loadingBar.y = height / 2 - loadingBar.h / 2;
+        }
+
+        class LoadingBar {
+            constructor(x, y, w, h) {this.x = x; this.y = y; this.w = w; this.h = h;}
+            show(p) {
+                noStroke();
+                const fillW = this.w * (p / 100);
+                for (let i = 0; i < fillW - 2; i += 10) {
+                    fill(isLagging ? color(206, 95, 100) : color(76, 175, 80));
+                    rect(this.x + i, this.y, 5, this.h, 4);
+                    fill(isLagging ? color(242, 97, 106) : color(102, 187, 106));
+                    rect(this.x + i + 5, this.y, 5, this.h, 4);
+                }
+                fill(255, 255, 255, 40);
+                stroke(0);
+                strokeWeight(3);
+                rect(this.x, this.y, this.w, this.h, 8);
+            }
+        }
+
+        class Bullet {
+            constructor() {this.r = 25; this.speed = 2; this.spawnEdge(); this.setVelocity(); this.flipX = random([true, false]); this.flipY = random([true, false]);}
+            spawnEdge() {
+                let edge = random([0, 2]);
+                if (edge === 0) {this.x = random(width); this.y = -this.r;}
+                else {this.x = random(width); this.y = height + this.r;}
+            }
+            setVelocity() {
+                const targetX = width / 2, targetY = height / 2;
+                const angle = atan2(targetY - this.y, targetX - this.x);
+                this.vx = cos(angle) * this.speed;
+                this.vy = sin(angle) * this.speed;
+            }
+            update() {this.x += this.vx; this.y += this.vy;}
+            show() {
+                if (bulletImg) {
+                    push(); imageMode(CENTER); translate(this.x, this.y);
+                    scale(this.flipX ? -1 : 1, this.flipY ? -1 : 1);
+                    image(bulletImg, 0, 0, this.r * 2, this.r * 2); pop();
+                } else {fill(255, 80, 80); noStroke(); ellipse(this.x, this.y, this.r * 2);}
+            }
+            hits(bar) {return this.x > bar.x && this.x < bar.x + bar.w && this.y > bar.y && this.y < bar.y + bar.h;}
+            contains(mx, my) {return dist(mx, my, this.x, this.y) < this.r;}
+        }
+
+        class Particle {
+            constructor(x, y, col = color(0)) {this.x = x; this.y = y; this.size = random(4, 8); this.vx = random(-3, 3); this.vy = random(-3, 3); this.alpha = 255; this.col = col;}
+            update() {this.x += this.vx; this.y += this.vy; this.alpha -= 10;}
+            show() {noStroke(); fill(this.col.levels[0], this.col.levels[1], this.col.levels[2], this.alpha); rect(this.x, this.y, this.size, this.size);}
+            isDead() {return this.alpha <= 0;}
+        }
+    </script>
+
+</body>
+
+</html>

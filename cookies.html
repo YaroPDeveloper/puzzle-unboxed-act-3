@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Privacy Preferences</title>
+  <link rel="icon" type="image/x-icon" href="/assets/textures/logo.ico">
+  <style>
+    @media (max-width: 600px) {
+      body {
+        font-size: xxx-large;
+      }
+      
+      button {
+        font-size: xxx-large;
+      }
+
+      input[type="checkbox"]{
+        transform: scale(3);
+      }
+    }
+    
+    body {
+      font-family: system-ui, sans-serif;
+      font-size: xx-large;
+      background-color: #e1e1e1;
+      background-image: radial-gradient(#c2c2c2 2px, transparent 3px);
+      background-size: 80px 80px;
+    }
+
+    .consent-banner,
+    #terms-section {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .consent-box,
+    .terms-box {
+      background: #f2f2f2;
+      border: 1px solid #555;
+      padding: 40px;
+      border-radius: 8px;
+      max-width: 800px;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+
+    .consent-box h2 {
+      margin-top: 0;
+    }
+
+    .consent-options {
+      background: #dedede;
+      padding: 1rem;
+      border-radius: 4px;
+    }
+
+    label {
+      display: block;
+    }
+    
+    button {
+      padding: 15px;
+      margin-right: 20px;
+      font-weight: bold;
+      font-size: xx-large;
+      border: none;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .confirm {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    .confirm:active {
+      background-color: #388e3c;
+    }
+
+    .details {
+      background: #555;
+      color: white;
+    }
+
+    .details:active {
+      background: #444;
+    }
+
+    #terms-section {
+      margin-top: 30px;
+      display: none;
+      flex-direction: column;
+    }
+
+    #continue-wrapper {
+      margin-top: 30px;
+      margin-bottom: 30px;
+      max-width: 600px;
+      width: 100%;
+    }
+
+    #continueBtn {
+      font-weight: bold;
+      background: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    #continueBtn:active {
+      background-color: #388e3c;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(2);
+      margin-right: 15px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="consent-banner">
+    <div class="consent-box">
+      <h2>We value your privacy.</h2>
+      <p>We use cookies and tracking technologies to improve your experience. Some of these are essential, others help
+        us monitor engagement, behavior, and performance, on behalf of our partners at the <strong>Digital Media Lab
+          (DML)</strong>.</p>
+
+      <div class="consent-options" id="detailed-options" style="display: none;">
+        <h3>Manage your preferences</h3>
+        <label>
+          <input type="checkbox" checked>
+          Store session activity (for internal analysis only)
+        </label>
+        <label>
+          <input type="checkbox" checked>
+          Analyze patterns to improve interaction design
+        </label>
+        <label>
+          <input type="checkbox" checked id="dmlTracking">
+          Send detailed input logs to Digital Media Lab (DML) for remote analysis
+        </label>
+        <label>
+          <input type="checkbox" checked>
+          Log touch gestures for usability testing
+        </label>
+      </div>
+
+      <div style="margin-top: 1.5rem;">
+        <button class="confirm" onclick="confirm()">Confirm</button>
+        <button class="details" onclick="toggleDetails()">View Details</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="terms-section">
+    <div class="terms-box">
+      <h2>Terms & Conditions</h2>
+      <p>
+        Welcome to the Digital Media Lab’s (DML) interactive research platform. By proceeding, you acknowledge and
+        consent to the collection, processing, and analysis of your interaction data within this environment. This may
+        include, but is not limited to, tracking behavioral patterns, usage metrics, and engagement signals throughout
+        your session.
+      </p>
+      <p>
+        The platform is operated by the DML as part of an ongoing study in adaptive interactive systems and intelligent
+        user interfaces. The research aims to improve the design and responsiveness of digital environments through real
+        world engagement. As such, your use of this platform may contribute to academic publications, system
+        development, and applied innovations in HCI.
+      </p>
+      <p>
+        Collected data may include click behavior, session duration, navigation paths, typing patterns, scroll depth,
+        and other non-personally identifiable input logs. In some cases, limited metadata such as device type or
+        approximate location may be recorded for analytical purposes. All information is handled securely in compliance
+        with institutional and ethical guidelines for research involving human interaction data.
+      </p>
+      <p>
+        Please note that this environment is subject to live monitoring. Researchers may observe interactions in real
+        time for quality assurance and debugging purposes. Your participation is voluntary, and you may withdraw at any
+        time by exiting the platform. Continued navigation constitutes informed consent to the terms outlined here and
+        in our broader privacy policy.
+      </p>
+      <p>
+        Depending on your selections, advanced tracking features, such as session replay, gesture recognition, and
+        personalized content delivery—may be enabled. These features are intended to enhance your experience and
+        contribute to the adaptive capabilities of the system.
+      </p>
+      <p>
+        In some cases, the DML may use aggregated or anonymized data for external collaboration or publication. However,
+        no personally identifying information will ever be disclosed without explicit additional consent. Your privacy
+        remains a priority at every stage of the research process.
+      </p>
+      <p>
+        If you have questions about data usage, privacy, or your rights as a participant, you are encouraged to review
+        the full terms or contact the Digital Media Lab directly. Contact information and a detailed privacy notice are
+        available upon request.
+      </p>
+    </div>
+
+    <div id="continue-wrapper">
+      <label>
+        <input type="checkbox" id="consentCheck" onchange="checkContinue()"> I agree to the terms above
+      </label><br>
+      <label>
+        <input type="checkbox" id="ageCheck" onchange="checkContinue()"> I confirm that I am 18 years or older
+      </label><br><br>
+      <button id="continueBtn" disabled onclick="finalContinue()">Continue</button>
+    </div>
+  </div>
+
+  <script>
+    function toggleDetails() {
+      const panel = document.getElementById("detailed-options");
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
+    }
+
+    function confirm() {
+      document.querySelector(".consent-banner").style.display = "none";
+      document.getElementById("terms-section").style.display = "flex";
+    }
+
+    function checkContinue() {
+      const consent = document.getElementById("consentCheck").checked;
+      const age = document.getElementById("ageCheck").checked;
+      const continueBtn = document.getElementById("continueBtn");
+
+      if (consent && age) {
+        continueBtn.disabled = false;
+        continueBtn.style.cursor = "pointer";
+        continueBtn.style.opacity = "1";
+      } else {
+        continueBtn.disabled = true;
+        continueBtn.style.cursor = "not-allowed";
+        continueBtn.style.opacity = "0.6";
+      }
+    }
+
+    function finalContinue() {
+      document.getElementById("terms-section").style.display = "none";
+      setTimeout(() => {
+        window.location.href = "disable.html"; //TODO: Replace redirection page
+      }, 500);
+    }
+  </script>
+</body>
+
+</html>

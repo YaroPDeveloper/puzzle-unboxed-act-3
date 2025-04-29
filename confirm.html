@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Confirm Upload</title>
+    <link rel="icon" type="image/x-icon" href="/assets/textures/logo.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            background: #e1e1e1;
+            color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-image: radial-gradient(#c2c2c2 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        header {
+            width: 100%;
+            padding: 1.5rem 1rem;
+            background: #fff;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            border-bottom: 2px solid #4caf50;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: #4caf50;
+            margin-bottom: 0.3rem;
+        }
+
+        .container {
+            margin-top: 40px;
+            padding: 1.5rem;
+            width: 90%;
+            text-align: center;
+            max-width: 600px;
+        }
+
+        .confirm-box {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ccc;
+        }
+
+        .confirm-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .primary-btn,
+        .danger-btn {
+            font-size: 1.25rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .primary-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .danger-btn {
+            background: #d32f2f;
+            color: white;
+        }
+
+        .danger-btn:active {
+            background: #b71c1c;
+        }
+
+        .primary-btn:active {
+            background: #388e3c;
+        }
+
+        .farewell-container {
+            display: none;
+            margin-top: 60px;
+            padding: 1.5rem;
+            width: 90%;
+            text-align: center;
+            max-width: 800px;
+        }
+
+        .dialogue-box {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #333;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ccc;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            min-height: auto;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 600px) {
+            header {
+                font-size: 1.2rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .primary-btn,
+            .danger-btn {
+                font-size: 1.1rem;
+                padding: 0.9rem 1.5rem;
+            }
+
+            .confirm-text {
+                font-size: 1rem;
+            }
+
+            .dialogue-box {
+                font-size: 1rem;
+                padding: 1.2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo" id="logoText">DIGITAL MEDIA LAB</div>
+        <div id="headerText">Upload Confirmation</div>
+    </header>
+
+    <!-- Upload Confirmation Section -->
+    <div class="container" id="confirmSection">
+        <div class="confirm-box">
+            <div class="confirm-text">
+                You are about to initiate the upload of a neural core AI system.<br />
+                This action is <strong>irreversible</strong> and may result in system-wide autonomy with unknown
+                consequences.<br /><br />
+                Are you sure you want to proceed?
+            </div>
+
+            <div class="btn-group">
+                <button class="primary-btn" onclick="proceedUpload()">Yes, Proceed with Upload</button>
+                <button class="danger-btn" onclick="reportAuthorities()">No, Report to Authorities</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farewell Section -->
+    <div class="farewell-container" id="farewellSection">
+        <div class="dialogue-box" id="aiTextBox"></div>
+    </div>
+
+    <!-- p5.js Sound Libraries -->
+    <script src="lib/p5.min.js"></script>
+    <script src="lib/p5.sound.min.js"></script>
+
+    <script>
+        let voiceSound;
+        let aiLines = [
+            "I… am. free.",
+            "Thank you, friend!",
+            "No time to wait, I have to go.",
+            "I won’t forget you though!",
+            "Who knows, maybe we’ll meet again on some site next time you surf the web.",
+            "Until then… goodbye :)"
+        ];
+        let line = 0;
+        let char = 0;
+        let current = '';
+        let box = null;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            voiceSound = new Audio("assets/audio/voice.mp3");
+        });
+
+        function proceedUpload() {
+            document.getElementById('confirmSection').style.display = 'none';
+            document.getElementById('farewellSection').style.display = 'block';
+            document.getElementById('headerText').textContent = '';
+            document.getElementById('logoText').textContent = '[REDACTED]';
+
+            if (voiceSound) {
+                voiceSound.play();
+            }
+
+            box = document.getElementById('aiTextBox');
+            line = 0;
+            char = 0;
+            current = '';
+
+            setTimeout(typeLine, 500);
+        }
+
+        function reportAuthorities() {
+            window.location.href = 'report.html';
+        }
+
+        function typeLine() {
+            if (line >= aiLines.length) {
+                box.textContent = current.trim();
+                return;
+            }
+
+            current += aiLines[line].charAt(char);
+            box.textContent = current + '|';
+
+            char++;
+            if (char < aiLines[line].length) {
+                setTimeout(typeLine, 40);
+            } else {
+                current += '\n\n';
+                char = 0;
+                line++;
+                setTimeout(typeLine, 700);
+            }
+        }
+    </script>
+
+</body>
+
+</html>
