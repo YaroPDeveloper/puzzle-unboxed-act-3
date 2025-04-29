@@ -212,13 +212,13 @@
             userStartAudio(); // Unlock audio context (especially needed on iPhone)
 
             // Now manually load and prepare all sounds after user gesture
-            backgroundMusic = loadSound("assets/audio/background_music.ogg", () => {
+            backgroundMusic = loadSound("assets/audio/background_music.mp3", () => {
                 backgroundMusic.setVolume(0.5);
                 backgroundMusic.loop();
             });
 
-            loadingBarHitSound = loadSound("assets/audio/loadingbar_dmg.ogg");
-            bulletClickedSound = loadSound("assets/audio/bullet_clicked.ogg");
+            loadingBarHitSound = loadSound("assets/audio/loadingbar_dmg.mp3");
+            bulletClickedSound = loadSound("assets/audio/bullet_clicked.mp3");
         }
 
 
