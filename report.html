@@ -67,6 +67,25 @@
       color: #333;
     }
 
+    .primary-btn {
+        font-size: 1.25rem;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: bold;
+        width: 100%;
+        cursor: pointer;
+        background: #4caf50;
+        color: white;
+        max-width: 400px;
+        margin: 2rem auto;
+        display: block;
+      }
+
+      .primary-btn:active {
+        background: #388e3c;
+      }
+
     @media (max-width: 600px) {
       header {
         font-size: 1.2rem;
@@ -83,6 +102,7 @@
       .message-box p {
         font-size: 1rem;
       }
+
     }
   </style>
 </head>
@@ -105,6 +125,16 @@
       </p>
     </div>
   </div>
+
+  <button id="nextPageBtn" class="primary-btn" onclick="goToThanksPage()">
+    Continue
+  </button>
+
+  <script>
+    function goToThanksPage() {
+      window.location.href = "thanks.html";
+    }
+  </script>
 
 </body>
 

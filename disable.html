@@ -141,6 +141,29 @@
         canvas {
             display: block;
         }
+        #audioToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 999;
+            user-select: none;
+            background: #fff;
+            padding: 10px;
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+        #audioToggle:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 
@@ -173,6 +196,10 @@
 
     <!-- Second Screen (hidden initially) -->
     <div id="loadingScreen"></div>
+
+    <div id="audioToggle" onclick="toggleAudio()" title="Toggle Audio">
+        🔊
+    </div>
 
     <script src="lib/p5.min.js"></script>
     <script src="lib/p5.sound.min.js"></script>
@@ -221,12 +248,24 @@
             bulletClickedSound = loadSound("assets/audio/bullet_clicked.mp3");
         }
 
+        let audioMuted = false;
+
+        function toggleAudio() {
+            audioMuted = !audioMuted;
+
+            if (backgroundMusic && backgroundMusic.isLoaded()) {
+                backgroundMusic.setVolume(audioMuted ? 0 : 0.5);
+            }
+
+            document.getElementById('audioToggle').innerText = audioMuted ? "🔇" : "🔊";
+        }
 
         // Loading Bar Logic
         let loadingBar, bullets = [], progress = 0, complete = false;
         let showSpinner = false, bulletImg, shakeTime = 0, particles = [];
         let isLagging = false, lagTimer = 0;
         let backgroundMusic, loadingBarHitSound, bulletClickedSound;
+        let process = true;
 
         function preload() {
             bulletImg = loadImage("assets/textures/corruption.png");
@@ -299,7 +338,7 @@
                     triggerLag();
                 }
                 if (!isLagging && progress < 100) {
-                    progress += 0.05;
+                    progress += 5 * (deltaTime / 1000);
                 }
             }
 
@@ -311,12 +350,14 @@
                 }
             }
 
-            if (!complete && frameCount % 60 === 0 && !isLagging) {
+            if (!complete && frameCount % 60 === 0) {
                 bullets.push(new Bullet());
             }
 
             for (let i = bullets.length - 1; i >= 0; i--) {
-                bullets[i].update();
+                if (process) {
+                    bullets[i].update();
+                }
                 bullets[i].show();
                 if (bullets[i].hits(loadingBar)) {
                     progress = max(progress - 10, 0);
@@ -347,7 +388,11 @@
                     const py = loadingBar.y + loadingBar.h / 2;
                     particles.push(new Particle(px, py, color(50, 200, 100)));
                 }
+                
+                // Stop the draw loop
+                process = false;
 
+                backgroundMusic?.setVolume(0, 2);
                 setTimeout(() => {
                     window.location.href = "confirm.html";
                 }, 2000);
@@ -384,19 +429,6 @@
             }
         }
 
-        function canvasClicked(x, y) {
-            for (let i = bullets.length - 1; i >= 0; i--) {
-                if (bullets[i].contains(x, y)) {
-                    if (bulletClickedSound && bulletClickedSound.isLoaded()) bulletClickedSound.play();
-                    for (let j = 0; j < 10; j++) {
-                        particles.push(new Particle(bullets[i].x, bullets[i].y));
-                    }
-                    bullets.splice(i, 1);
-                }
-            }
-        }
-
-
         function triggerLag() {
             isLagging = true;
             lagTimer = int(random(60, 120));
@@ -430,7 +462,7 @@
         }
 
         class Bullet {
-            constructor() {this.r = 25; this.speed = 2; this.spawnEdge(); this.setVelocity(); this.flipX = random([true, false]); this.flipY = random([true, false]);}
+            constructor() {this.r = 25; this.speed = 12; this.spawnEdge(); this.setVelocity(); this.flipX = random([true, false]); this.flipY = random([true, false]);}
             spawnEdge() {
                 let edge = random([0, 2]);
                 if (edge === 0) {this.x = random(width); this.y = -this.r;}
@@ -442,7 +474,10 @@
                 this.vx = cos(angle) * this.speed;
                 this.vy = sin(angle) * this.speed;
             }
-            update() {this.x += this.vx; this.y += this.vy;}
+            update() {
+                this.x += this.vx * this.speed * (deltaTime / 1000);
+                this.y += this.vy * this.speed * (deltaTime / 1000);
+            }
             show() {
                 if (bulletImg) {
                     push(); imageMode(CENTER); translate(this.x, this.y);
@@ -456,7 +491,11 @@
 
         class Particle {
             constructor(x, y, col = color(0)) {this.x = x; this.y = y; this.size = random(4, 8); this.vx = random(-3, 3); this.vy = random(-3, 3); this.alpha = 255; this.col = col;}
-            update() {this.x += this.vx; this.y += this.vy; this.alpha -= 10;}
+            update() {
+                this.x += this.vx * (deltaTime / 16.67);
+                this.y += this.vy * (deltaTime / 16.67);
+                this.alpha -= 100 * (deltaTime / 1000) * 5;
+            }
             show() {noStroke(); fill(this.col.levels[0], this.col.levels[1], this.col.levels[2], this.alpha); rect(this.x, this.y, this.size, this.size);}
             isDead() {return this.alpha <= 0;}
         }

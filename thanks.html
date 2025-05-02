@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Thank You</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, sans-serif;
+            background: #e1e1e1;
+            color: #111;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            background-image: radial-gradient(#c2c2c2 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .container {
+            margin-top: 60px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .box {
+            background: white;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid #ccc;
+        }
+
+        h1 {
+            color: #4caf50;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #333;
+        }
+
+        a.button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: #4caf50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+
+        a.button:hover {
+            background: #388e3c;
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            p {
+                font-size: 1rem;
+            }
+
+            a.button {
+                font-size: 1rem;
+                padding: 0.9rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="box">
+            <h1>Thank You for Participating!</h1>
+            <p>Please fill out the questionnaire.</p>
+            <a class="button" href="https://forms.gle/gB1cKeYGQC49hvJT9" target="_blank">Go to Questionnaire</a>
+            <p>Once you’ve completed it, please contact the study team.</p>
+        </div>
+    </div>
+</body>
+
+</html>

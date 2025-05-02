@@ -222,19 +222,28 @@
   <script>
     function toggleDetails() {
       const panel = document.getElementById("detailed-options");
-      panel.style.display = panel.style.display === "none" ? "block" : "none";
+      const detailsButton = document.querySelector(".details");
+      
+      // Toggle the visibility of the details
+      if (panel.style.display === "none" || panel.style.display === "") {
+        panel.style.display = "block";
+        detailsButton.textContent = "Hide Details"; 
+      } else {
+        panel.style.display = "none";
+        detailsButton.textContent = "View Details";
+      }
     }
-
+  
     function confirm() {
       document.querySelector(".consent-banner").style.display = "none";
       document.getElementById("terms-section").style.display = "flex";
     }
-
+  
     function checkContinue() {
       const consent = document.getElementById("consentCheck").checked;
       const age = document.getElementById("ageCheck").checked;
       const continueBtn = document.getElementById("continueBtn");
-
+  
       if (consent && age) {
         continueBtn.disabled = false;
         continueBtn.style.cursor = "pointer";
@@ -245,11 +254,11 @@
         continueBtn.style.opacity = "0.6";
       }
     }
-
+  
     function finalContinue() {
       document.getElementById("terms-section").style.display = "none";
       setTimeout(() => {
-        window.location.href = "disable.html"; //TODO: Replace redirection page
+        window.location.href = "disable.html";
       }, 500);
     }
   </script>

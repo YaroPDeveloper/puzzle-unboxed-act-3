@@ -81,8 +81,18 @@
         }
 
         .primary-btn {
+            font-size: 1.25rem;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
             background: #4caf50;
             color: white;
+            max-width: 400px;
+            margin: 2rem auto;
+            display: block;
         }
 
         .danger-btn {
@@ -179,6 +189,11 @@
         <div class="dialogue-box" id="aiTextBox"></div>
     </div>
 
+    <button id="nextPageBtn" style="display: none; margin-top: 2rem; width: auto; padding: 1rem 2rem;"
+        class="primary-btn" onclick="goToThanksPage()">
+        Continue
+    </button>
+
     <!-- p5.js Sound Libraries -->
     <script src="lib/p5.min.js"></script>
     <script src="lib/p5.sound.min.js"></script>
@@ -227,6 +242,9 @@
         function typeLine() {
             if (line >= aiLines.length) {
                 box.textContent = current.trim();
+                setTimeout(() => {
+                    document.getElementById('nextPageBtn').style.display = 'inline-block';
+                }, 2000);
                 return;
             }
 
@@ -242,6 +260,10 @@
                 line++;
                 setTimeout(typeLine, 700);
             }
+        }
+
+        function goToThanksPage() {
+            window.location.href = "thanks.html";
         }
     </script>
 
